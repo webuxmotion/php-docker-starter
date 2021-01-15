@@ -2,7 +2,11 @@
 
 class Posts {
     
-    public function __construct() {
-        debug('Posts::__construct');
+    public function indexAction() {
+        debug('Posts::indexAction');
+    }
+
+    public function testAction() {
+        debug('Posts::testAction');
     }
 }

@@ -46,6 +46,13 @@ class Router {
         return $name;
     }
 
+    protected static function lowerCamelCase($name) {
+        $name = self::upperCamelCase($name);
+        $name = lcfirst($name);
+        
+        return $name;
+    }
+
     public static function dispatch($url) {
         if (self::matchRoute($url)) {
             
@@ -53,9 +60,18 @@ class Router {
             $controller = self::upperCamelCase($controller);
 
             if (class_exists($controller)) {
-                new $controller();
+                $controllerObj = new $controller();
+                $action = self::$route['action'];
+                $action = self::lowerCamelCase($action);
+                $action = $action . 'Action';
+
+                if (method_exists($controllerObj, $action)) {
+                    $controllerObj->$action();
+                } else {
+                    debug("Action <b>$action</b> not found");
+                }
             } else {
-                echo "Controller <b>$controller</b> not found";
+                debug("Controller <b>$controller</b> not found");
             }
         } else {
             http_response_code(404);

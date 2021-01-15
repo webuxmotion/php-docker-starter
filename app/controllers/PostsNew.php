@@ -2,7 +2,11 @@
 
 class PostsNew {
     
-    public function __construct() {
-        debug('PostsNew::__construct');
+    public function indexAction() {
+        debug('PostsNew::indexAction');
+    }
+
+    public function testPageAction() {
+        debug('PostsNew::testPageAction');
     }
 }
