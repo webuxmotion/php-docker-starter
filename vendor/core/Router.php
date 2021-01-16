@@ -1,5 +1,7 @@
 <?php
 
+namespace vendor\core;
+
 class Router {
     protected static $routes = [];
     protected static $route = [];
@@ -10,6 +12,8 @@ class Router {
     }
 
     public static function dispatch($url) {
+        $url = self::removeQueryString($url);
+
         if (self::matchRoute($url)) {
 
             $controllerName = self::getControllerName();
@@ -18,6 +22,8 @@ class Router {
             if (self::$controllerObj) {
                 $actionName = self::getActionName();
                 self::callAction($actionName);
+
+                debug(self::$route);
             }
         } else {
             http_response_code(404);
@@ -48,6 +54,8 @@ class Router {
                     $route['action'] = 'index';
                 }
 
+                $route['controller'] = upperCamelCase($route['controller']);
+
                 self::$route = $route;
                 return true;
             }
@@ -58,7 +66,7 @@ class Router {
 
     protected static function getControllerName() {
         $name = self::$route['controller'];
-        $name = upperCamelCase($name);
+        $name = 'app\controllers\\' . $name;
 
         return $name;
     }
@@ -73,7 +81,7 @@ class Router {
 
     protected static function loadController($name) {
         if (class_exists($name)) {
-            self::$controllerObj = new $name();
+            self::$controllerObj = new $name(self::$route);
         } else {
             debug("Controller <b>$name</b> not found");
         }
@@ -85,5 +93,19 @@ class Router {
         } else {
             debug("Action <b>$name</b> not found");
         }
+    }
+
+    protected static function removeQueryString($url) {
+        
+        if ($url) {
+            $params = explode('&', $url);
+            $urlCandidate = $params[0];
+
+            if (false === strpos($urlCandidate, '=')) {
+                return rtrim($urlCandidate, '/');
+            }
+        }
+
+        return '';
     }
 }

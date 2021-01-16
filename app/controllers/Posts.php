@@ -1,12 +1,20 @@
 <?php
 
-class Posts {
+namespace app\controllers;
+
+use vendor\core\base\Controller;
+
+class Posts extends Controller {
     
     public function indexAction() {
-        debug('Posts::indexAction');
+        
     }
 
     public function testAction() {
-        debug('Posts::testAction');
+        
+    }
+
+    public function viewAction() {
+        debug($_GET);
     }
 }
